@@ -204,6 +204,7 @@ class GeneSequencing:
 								nills -= 1
 
 							startingColumn = MAXINDELS
+							innerRow = 0
 
 							# initialize matrix
 							costMatrix[0][startingColumn][cost] = 0
@@ -228,12 +229,15 @@ class GeneSequencing:
 											left = costMatrix[innerRow][innerColumn - 1][cost] + INDEL
 
 										diagonal = None
-										topStringIndex = topStringMinIndex
-										topStringIndex += innerColumn
+										topStringIndex = topStringMinIndex + startingColumn
+										topStringIndex += (innerColumn - startingColumn)
+
+										if topStringIndex > (topStringDashedLen-1):
+											topStringIndex = topStringDashedLen-1
 
 										if costMatrix[innerRow - 1][innerColumn] is None:
 											diagonal = math.inf
-										elif topStringDashed[topStringMinIndex] == sideStringDashed[innerRow]:
+										elif topStringDashed[topStringIndex] == sideStringDashed[innerRow]:
 											diagonal = costMatrix[innerRow - 1][innerColumn][cost] + MATCH
 										else:
 											diagonal = costMatrix[innerRow - 1][innerColumn][cost] + SUB
@@ -266,7 +270,6 @@ class GeneSequencing:
 
 							sideStringIndex = sideStringDashedLen - 1
 							topStringIndex = topStringDashedLen - 1
-							#currentEntry = costMatrix[sideStringIndex][topStringIndex]
 							innerColumn = bandWidth-1
 							innerRow = sideStringIndex
 
@@ -280,7 +283,7 @@ class GeneSequencing:
 
 							topStringAlignment.clear()
 							sideStringAlignment.clear()
-###
+
 							while currentEntry[previous] is not None:
 								if currentEntry[previous] == Side.l:
 									sideStringAlignment.append("-")
